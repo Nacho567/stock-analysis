@@ -1,30 +1,93 @@
+Sub formatAllStocksAnalysisTable()
+    
+    'Formatting
+    Worksheets("All Stocks Analysis").Activate
+    Range("A3:C3").Font.Bold = True
+    Range("A3:C3").Borders(xlEdgeBottom).LineStyle = xlContinuous
+    Range("A3:C3").Font.Size = 16
+    Range("B4:B15").NumberFormat = "#,##0"
+    Range("C4:C15").NumberFormat = "0.0%"
+    'Range("C4:C15").Font.Color = RGB(0, 0, 0)
+    Columns("B").AutoFit
+    
+    dataRowStart = 4
+    dataRowEnd = 15
+    For i = dataRowStart To dataRowEnd
+
+        If Cells(i, 3) > 0 Then
+
+            'Color the cell green
+            Cells(i, 3).Interior.Color = vbGreen
+
+        ElseIf Cells(i, 3) < 0 Then
+
+            'Color the cell red
+            Cells(i, 3).Interior.Color = vbRed
+
+        Else
+
+            'Clear the cell color
+            Cells(i, 3).Interior.Color = xlNone
+
+        End If
+
+    Next i
+    
+
+End Sub
+
+######################################
+
+
 Sub DQAnalysis()
 
     Worksheets("DQ Analysis").Activate
+
     Range("A1").Value = "DAQO (Ticker: DQ)"
-    
+
     'Create a header row
     Cells(3, 1).Value = "Year"
     Cells(3, 2).Value = "Total Daily Volume"
     Cells(3, 3).Value = "Return"
     
     Worksheets("2018").Activate
-    rowStart = 2
-    rowEnd = 3013
+
+    'set initial volume to zero
     totalVolume = 0
 
+    Dim startingPrice As Double
+    Dim endingPrice As Double
+
+    'Establish the number of rows to loop over
+    rowStart = 2
+    rowEnd = Cells(Rows.Count, "A").End(xlUp).Row
+
+    'loop over all the rows
     For i = rowStart To rowEnd
-        'increase totalVolume
+
         If Cells(i, 1).Value = "DQ" Then
+
+            'increase totalVolume by the value in the current row
             totalVolume = totalVolume + Cells(i, 8).Value
+
+        End If
+
+        If Cells(i - 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            startingPrice = Cells(i, 6).Value
+
+        End If
+
+        If Cells(i + 1, 1).Value <> "DQ" And Cells(i, 1).Value = "DQ" Then
+
+            endingPrice = Cells(i, 6).Value
+
         End If
 
     Next i
-    
-    'MsgBox (totalVolume)
 
     Worksheets("DQ Analysis").Activate
     Cells(4, 1).Value = 2018
     Cells(4, 2).Value = totalVolume
-    
+    Cells(4, 3).Value = (endingPrice / startingPrice) - 1
 End Sub

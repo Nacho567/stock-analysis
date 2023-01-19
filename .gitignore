@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#added folder of unused files for challenge
+Not_needed/
+
 # C extensions
 *.so
 
